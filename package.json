@@ -1,0 +1,19 @@
+{
+  "name": "kiritoru",
+  "version": "1.0.0",
+  "description": "Screen capture",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "asar": "^0.12.3",
+    "electron": "^1.4.6",
+    "electron-packager": "^8.2.0",
+    "electron-prebuilt": "^1.4.6",
+    "domready": "^1.0.8",
+    "react": "^0.13.2"
+  }
+}

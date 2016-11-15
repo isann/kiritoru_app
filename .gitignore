@@ -1,0 +1,6 @@
+.idea
+.DS_Store
+*.iml
+node_modules
+*.log
+*-darwin-x64

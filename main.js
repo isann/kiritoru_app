@@ -28,6 +28,7 @@ app.on('ready', function () {
   const ret = globalShortcut.register('CommandOrControl+L', () => {
     // console.log('CommandOrControl+X is pressed');
     mainWindow.focus();
+    mainWindow.webContents.send('startMessage', 'start');
   });
   if (!ret) {
     console.log('registration failed')
@@ -39,14 +40,14 @@ app.on('ready', function () {
   // mainWindow = new BrowserWindow({width: 640, height: 380});
   // mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow = new BrowserWindow({
-    left           : 0,
-    top            : 0,
-    width          : size.width,
-    height         : size.height,
-    frame          : false,
-    show           : true,
-    transparent    : true,
-    resizable      : false,
+    left         : 0,
+    top          : 0,
+    width        : size.width,
+    height       : size.height,
+    frame        : false,
+    show         : true,
+    transparent  : true,
+    resizable    : false,
     'alwaysOnTop': false
   });
 
@@ -62,28 +63,28 @@ app.on('ready', function () {
 });
 
 ipcMain.on('requsetMessage', (ev, message) => {
-  console.log(123, message);  // prints "ping"
-  ev.sender.send('responseMessage', 'pong');
+  // console.log(123, message);  // prints "ping"
+  // ev.sender.send('responseMessage', 'pong');
   var Screen = electron.screen;
   var size = Screen.getPrimaryDisplay().size;
   // Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
   var subWindow = new BrowserWindow({
     // width    : size.width,
     // height   : size.height,
-    left           : 0,
-    top            : 0,
-    width          : message.movedX,
-    height         : message.movedY,
-    minWidth       : 400,
-    minHeight      : 400,
-    frame          : false,
-    show           : false,
-    transparent    : false,
-    resizable      : false,
+    left         : 0,
+    top          : 0,
+    width        : message.movedX,
+    height       : message.movedY,
+    minWidth     : 400,
+    minHeight    : 400,
+    frame        : false,
+    show         : false,
+    transparent  : false,
+    resizable    : false,
     'alwaysOnTop': true
   });
   subWindow.loadURL(`file://${__dirname}/sub.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
-  setTimeout(function(){
+  setTimeout(function () {
     subWindow.show();
   }, 2000);
 });

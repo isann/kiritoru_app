@@ -10,6 +10,7 @@ var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 // Main - Render 通信モジュール
 var ipcMain = electron.ipcMain;
+var globalShortcut = electron.globalShortcut;
 
 // メインウィンドウはGCされないようにグローバル宣言
 var mainWindow = null;
@@ -23,6 +24,15 @@ app.on('window-all-closed', function () {
 
 // Electronの初期化完了後に実行
 app.on('ready', function () {
+
+  const ret = globalShortcut.register('CommandOrControl+X', () => {
+    // console.log('CommandOrControl+X is pressed');
+    mainWindow.focus();
+  });
+  if (!ret) {
+    console.log('registration failed')
+  }
+
   var Screen = electron.screen;
   var size = Screen.getPrimaryDisplay().size;
   // メイン画面の表示。ウィンドウの幅、高さを指定できる

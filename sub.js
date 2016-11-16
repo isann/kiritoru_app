@@ -59,7 +59,7 @@ window.addEventListener('load', function () {
           video.src = streamUrl;
           video.play();
           // document.querySelector('video').src = URL.createObjectURL(stream)
-          setTimeout(function(){
+          setTimeout(function () {
             getImage(function (url) {
               // <img>タグに画像として読み込む
               // $('img').attr(src, url);
@@ -80,6 +80,16 @@ window.addEventListener('load', function () {
         });
         return
       }
+    }
+  });
+
+  window.addEventListener('keydown', function (e) {
+    var keyCode = e.keyCode;
+    switch (keyCode) {
+      case 13:
+        // Enter key press
+        window.close();
+        break;
     }
   });
 

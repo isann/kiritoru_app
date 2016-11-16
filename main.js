@@ -25,7 +25,7 @@ app.on('window-all-closed', function () {
 // Electronの初期化完了後に実行
 app.on('ready', function () {
 
-  const ret = globalShortcut.register('CommandOrControl+X', () => {
+  const ret = globalShortcut.register('CommandOrControl+L', () => {
     // console.log('CommandOrControl+X is pressed');
     mainWindow.focus();
   });

@@ -22,6 +22,18 @@ window.addEventListener('load', function () {
   var baseY = 0;
   var movedX = 0;
   var movedY = 0;
+  window.addEventListener('keydown', function(e){
+    switch (e.keyCode){
+      case 27:
+        // cursor 消す
+        rootDivElem.removeChild(cursorDiv);
+        cursorDiv = null;
+        ipcRender.send('nonactiveMessage', {});
+        break;
+      default:
+        return;
+    }
+  });
   window.addEventListener('mousemove', function (e) {
     if (!activeCapture) return;
     if (cropping) {

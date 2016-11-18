@@ -27,6 +27,13 @@ app.on('ready', function () {
 
   const ret = globalShortcut.register('CommandOrControl+L', () => {
     // console.log('CommandOrControl+X is pressed');
+    var bounds = mainWindow.getBounds();
+    bounds.x = 0;
+    bounds.y = 0;
+    bounds.width = size.width;
+    bounds.height = size.height;
+    mainWindow.setBounds(bounds, false);
+    // mainWindow.setSize(size.width, size.height, false);
     mainWindow.focus();
     mainWindow.webContents.send('startMessage', 'start');
   });
@@ -42,8 +49,8 @@ app.on('ready', function () {
   mainWindow = new BrowserWindow({
     left         : 0,
     top          : 0,
-    width        : size.width,
-    height       : size.height,
+    width        : 1,
+    height       : 1,
     frame        : false,
     show         : true,
     transparent  : true,
@@ -87,4 +94,14 @@ ipcMain.on('requsetMessage', (ev, message) => {
   setTimeout(function () {
     subWindow.show();
   }, 2000);
+});
+
+ipcMain.on('nonactiveMessage', (ev, message) => {
+  var bounds = mainWindow.getBounds();
+  bounds.x = 0;
+  bounds.y = 0;
+  bounds.width = 100;
+  bounds.height = 100;
+  mainWindow.setBounds(bounds, false);
+  mainWindow.focus();
 });

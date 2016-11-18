@@ -97,6 +97,8 @@ window.addEventListener('load', function () {
       // 選択状態解除
       cropping = false;
       activeCapture = false;
+      // cursor 消す
+      ipcRender.send('nonactiveMessage', {});
     }
   });
 

@@ -58,7 +58,7 @@ app.on('ready', function () {
     'alwaysOnTop': false
   });
 
-  mainWindow.maximize();
+  //mainWindow.maximize();
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 

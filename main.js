@@ -91,9 +91,13 @@ ipcMain.on('requsetMessage', (ev, message) => {
     'alwaysOnTop': true
   });
   subWindow.loadURL(`file://${__dirname}/sub.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
+  // TODO: サブウィンドウが描画されてからデスクトップ画像を切り抜くため、サブウィンドウ自体がキャプチャされてその部分が白くなってしまう
+  // 根本的にはサブウィンドウをはじめ見えないようにしておくか、ここでデスクトップ画像を取得するように修正したほうがよいと思う。
+  // タイマーはサブウィンドウ自体を描画せずにデスクトップをキャプチャできるだというだいたいの時間で1秒でなれけばいけない、ということはない。
+  // ただタイマーで待つ時間が長いとキャプチャ位置がずれたりとかしてしまうので、おそすぎてもいけない。
   setTimeout(function () {
     subWindow.show();
-  }, 2000);
+  }, 1000);
 });
 
 ipcMain.on('nonactiveMessage', (ev, message) => {

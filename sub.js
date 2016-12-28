@@ -25,16 +25,14 @@ window.addEventListener('load', function () {
   var movedY = getParameterByName('movedY');
   var video = document.getElementById('video');
   var streamUrl;
-  getImage = function (callback) {
-    // var canvas = document.createElement('canvas');
-    var canvas = document.getElementById('hogehoge');
+  var drawImage = function () {
+    var canvas = document.getElementById('capture');
     canvas.width = movedX;
     canvas.height = movedY;
     var context = canvas.getContext('2d');
-    // Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
+    // TODO: Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
+    // TODO: DesktopCapture の video 表示するとわかるが、その時点でオリジナルのカラーと異なって見えるのが原因不明
     context.drawImage(video, baseX, Number(baseY) + 20, movedX, Number(movedY), 0, 0, movedX, movedY);
-    // context.drawImage(video, 0, 0, movedX, movedY);
-    // callback(canvas.toDataURL());
   };
 
 
@@ -59,22 +57,11 @@ window.addEventListener('load', function () {
           video.src = streamUrl;
           video.play();
           // document.querySelector('video').src = URL.createObjectURL(stream)
+
+          // TODO: timeout で実行しないとキャプチャした画像が白色になってしまう、原因不明
           setTimeout(function () {
-            getImage(function (url) {
-              // <img>タグに画像として読み込む
-              // $('img').attr(src, url);
-
-              // base64の文字列として取り出して利用する
-              var dataString = url.replace('data:image/png;base64,', '');
-              // console.log(dataString);
-
-              var img = document.createElement('img');
-              img.src = url;
-              img.width = movedX;
-              img.height = movedY;
-              window.document.body.insertBefore(img, window.document.body.childNodes[0]);
-            });
-          }, 500);
+            drawImage();
+          }, 100);
         }, function (error) {
           console.log(error);
         });

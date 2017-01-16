@@ -1,7 +1,7 @@
 # kiritoru
 kiritori が Sierra にアップデートしたら動作しなくなってしまったので作りました。
 デスクトップのスクリーンショット → 最前面で表示 するアプリです。
-![alt](https://raw.githubusercontent.com/isann/private_js_capture/master/demo.gif "demo")
+[kiritoru_demo.gif (1769×954)](https://raw.githubusercontent.com/isann/images/master/kiritoru_demo.gif)
 
 # 操作方法
 メインウィンドウは完全透明です。

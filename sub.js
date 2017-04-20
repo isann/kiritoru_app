@@ -35,11 +35,12 @@ window.addEventListener('load', function () {
     context.drawImage(video, baseX, Number(baseY) + 20, movedX, Number(movedY), 0, 0, movedX, movedY);
   };
 
-
-  desktopCapturer.getSources({types: ['window', 'screen']}, function (error, sources) {
+  desktopCapturer.getSources({types: ['screen']}, function (error, sources) {
     if (error) throw error;
     for (let i = 0; i < sources.length; ++i) {
-      if (sources[i].name == 'Entire screen') {
+      // TODO: 選択したウィンドウの名前？（スクリーン名）で座標を切り取りたいがやり方がわからない
+      // 現状、app.js の MainWindow がマルチスクリーンの場合、片側（Screen 1）にしかもっていけないので固定…。
+      if (sources[i].name == 'Screen 1' || sources[i].name == 'Entire screen') {
         navigator.webkitGetUserMedia({
           audio: false,
           video: {

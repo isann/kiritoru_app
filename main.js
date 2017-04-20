@@ -60,6 +60,7 @@ app.on('ready', function () {
 
   //mainWindow.maximize();
 
+  // TODO: マルチスクリーンのとき、すべてのスクリーンにウィンドウが必要、そのときスクリーン名を識別しないとキャプチャ時にスクリーン名が判別できない…。
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // ウィンドウが閉じられたらアプリも終了
@@ -108,4 +109,11 @@ ipcMain.on('nonactiveMessage', (ev, message) => {
   bounds.height = 100;
   mainWindow.setBounds(bounds, false);
   mainWindow.focus();
+});
+
+/**
+ * デバッグ用 IPC メッセージ
+ */
+ipcMain.on('console', (ev, message) => {
+  console.log(message);
 });

@@ -4,19 +4,22 @@
   "description": "Screen capture",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/.bin/electron-packager . kiritoru --platform=darwin,win32 --arch=x64 --overwrite",
-    "run": "./node_modules/.bin/electron .",
-    "": ""
+    "start": "electron .",
+    "build-mac": "npx electron-builder --mac --universal --dir",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "xyz.zono.kiritoru",
+    "productName": "kiritoru",
+    "files": [
+      "assets/**/*",
+      "main.js"
+    ]
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "asar": "^0.12.3",
-    "electron": "^1.4.6",
-    "electron-packager": "^8.2.0",
-    "electron-prebuilt": "^1.4.6",
-    "domready": "^1.0.8",
-    "react": "^0.13.2"
+  "devDependencies": {
+    "electron": "^12.0.1",
+    "electron-builder": "^22.10.5"
   }
 }

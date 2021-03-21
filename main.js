@@ -15,6 +15,8 @@ var globalShortcut = electron.globalShortcut;
 // メインウィンドウはGCされないようにグローバル宣言
 var mainWindow = null;
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
+
 // 全てのウィンドウが閉じたら終了
 app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
@@ -26,7 +28,7 @@ app.on('window-all-closed', function () {
 app.on('ready', function () {
 
   const ret = globalShortcut.register('CommandOrControl+L', () => {
-    // console.log('CommandOrControl+X is pressed');
+    // console.log('CommandOrControl+L is pressed');
     var bounds = mainWindow.getBounds();
     bounds.x = 0;
     bounds.y = 0;
@@ -34,7 +36,7 @@ app.on('ready', function () {
     bounds.height = size.height;
     mainWindow.setBounds(bounds, false);
     // mainWindow.setSize(size.width, size.height, false);
-    mainWindow.focus();
+    mainWindow.show();
     mainWindow.webContents.send('startMessage', 'start');
   });
   if (!ret) {
@@ -47,21 +49,28 @@ app.on('ready', function () {
   // mainWindow = new BrowserWindow({width: 640, height: 380});
   // mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow = new BrowserWindow({
-    left         : 0,
-    top          : 0,
-    width        : 1,
-    height       : 1,
-    frame        : false,
-    show         : true,
-    transparent  : true,
-    resizable    : false,
-    'alwaysOnTop': false
+    left          : 0,
+    top           : 0,
+    width         : 1,
+    height        : 1,
+    frame         : false,
+    show          : true,
+    transparent   : true,
+    resizable     : false,
+    alwaysOnTop   : false,
+    webPreferences: {
+      nodeIntegration : false,
+      contextIsolation: false,
+      preload         : `${__dirname}/assets/js/preload.js`,
+    },
   });
 
   //mainWindow.maximize();
 
   // TODO: マルチスクリーンのとき、すべてのスクリーンにウィンドウが必要、そのときスクリーン名を識別しないとキャプチャ時にスクリーン名が判別できない…。
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  // console.log(`file://${__dirname}/assets/views/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/assets/views/index.html`);
+  // mainWindow.webContents.openDevTools();
 
   // ウィンドウが閉じられたらアプリも終了
   mainWindow.on('closed', function () {
@@ -79,19 +88,25 @@ ipcMain.on('requsetMessage', (ev, message) => {
   var subWindow = new BrowserWindow({
     // width    : size.width,
     // height   : size.height,
-    left         : 0,
-    top          : 0,
-    width        : message.movedX,
-    height       : message.movedY,
-    minWidth     : 400,
-    minHeight    : 400,
-    frame        : false,
-    show         : false,
-    transparent  : false,
-    resizable    : false,
-    'alwaysOnTop': true
+    left          : 0,
+    top           : 0,
+    width         : message.movedX,
+    height        : message.movedY,
+    minWidth      : 400,
+    minHeight     : 400,
+    frame         : false,
+    show          : false,
+    transparent   : false,
+    resizable     : false,
+    alwaysOnTop   : true,
+    webPreferences: {
+      nodeIntegration : false,
+      contextIsolation: false,
+      preload         : `${__dirname}/assets/js/preload.js`,
+    }
   });
-  subWindow.loadURL(`file://${__dirname}/sub.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
+  subWindow.loadURL(`file://${__dirname}/assets/views/sub.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
+  // subWindow.webContents.openDevTools();
   // TODO: サブウィンドウが描画されてからデスクトップ画像を切り抜くため、サブウィンドウ自体がキャプチャされてその部分が白くなってしまう
   // 根本的にはサブウィンドウをはじめ見えないようにしておくか、ここでデスクトップ画像を取得するように修正したほうがよいと思う。
   // タイマーはサブウィンドウ自体を描画せずにデスクトップをキャプチャできるだというだいたいの時間で1秒でなれけばいけない、ということはない。

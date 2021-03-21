@@ -1,10 +1,8 @@
 'use strict';
 
-var ipcRender = require('electron').ipcRenderer;
-
 // ipc received.
 var activeCapture = false;
-ipcRender.on('startMessage', function (ev, message) {
+ipcRenderer.on('startMessage', function (ev, message) {
   activeCapture = true;
 });
 
@@ -22,13 +20,13 @@ window.addEventListener('load', function () {
   var baseY = 0;
   var movedX = 0;
   var movedY = 0;
-  window.addEventListener('keydown', function(e){
-    switch (e.keyCode){
+  window.addEventListener('keydown', function (e) {
+    switch (e.keyCode) {
       case 27:
         // cursor 消す
         rootDivElem.removeChild(cursorDiv);
         cursorDiv = null;
-        ipcRender.send('nonactiveMessage', {});
+        ipcRenderer.send('nonactiveMessage', {});
         break;
       default:
         return;
@@ -50,7 +48,7 @@ window.addEventListener('load', function () {
         cursorDiv.className = 'cursor';
         cursorDiv.style.left = e.clientX + 'px';
         cursorDiv.style.top = e.clientY + 'px';
-        console.log(cursorDiv.style.left, cursorDiv.style.top);
+        // console.log(cursorDiv.style.left, cursorDiv.style.top);
         rootDivElem.insertBefore(cursorDiv, rootDivElem.childNodes[0]);
       } else {
         cursorDiv.style.left = e.clientX + 'px';
@@ -61,7 +59,7 @@ window.addEventListener('load', function () {
   window.addEventListener('mousedown', function (e) {
     if (cropping) {
       // // 矩形を決定
-      // ipcRender.send( 'requsetMessage', {
+      // ipcRenderer.send( 'requsetMessage', {
       //   'baseX': baseX,
       //   'baseY': baseY,
       //   'movedX': movedX,
@@ -87,7 +85,7 @@ window.addEventListener('load', function () {
   window.addEventListener('mouseup', function (e) {
     if (cropping) {
       // 矩形を決定
-      ipcRender.send('requsetMessage', {
+      ipcRenderer.send('requsetMessage', {
         'baseX' : baseX,
         'baseY' : baseY,
         'movedX': movedX,
@@ -98,7 +96,7 @@ window.addEventListener('load', function () {
       cropping = false;
       activeCapture = false;
       // cursor 消す
-      ipcRender.send('nonactiveMessage', {});
+      ipcRenderer.send('nonactiveMessage', {});
     }
   });
 

@@ -1,0 +1,76 @@
+name: Create Release
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  setup-release:
+    name: Setup release
+    runs-on: macos-latest
+    steps:
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Get url to upload to release from output
+        env:
+          url: ${{ steps.create_release.outputs.upload_url }}
+        run: |
+          mkdir artifact
+          echo $url > artifact/url.txt
+          pwd
+          ls artifact/url.txt
+      - name: Upload artifact to share url with other jobs
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifact
+          path: artifact/url.txt
+
+  release-pkg:
+    name: Release package
+    needs: setup-release
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - name: npm install
+        run: npm ci
+      - name: build application
+        run: npm run build-mac
+      - name: Archive app file
+        id: archive_app
+        run: |
+          cd dist/mac-universal
+          zip -r kiritoru-mac-universal kiritoru.app
+
+      - name: Download artifact to get url to upload to release
+        uses: actions/download-artifact@v1
+        with:
+          name: artifact
+      - name: Get url to upload to release from artifact
+        id: get_url
+        run: |
+          pwd
+          ls artifact/url.txt
+          url=$(cat artifact/url.txt)
+          echo "##[set-output name=upload_url;]$url"
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_url.outputs.upload_url }}
+          asset_path: dist/mac-universal/kiritoru-mac-universal.zip
+          asset_name: kiritoru-mac-universal.zip
+          asset_content_type: application/zip

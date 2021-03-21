@@ -10,7 +10,8 @@ const ipcMain = electron.ipcMain;
 const globalShortcut = electron.globalShortcut;
 
 // メインウィンドウはGCされないようにグローバル宣言
-let mainWindow = null;
+let transparentWindow = null;
+let captureWindow = null;
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
 
@@ -25,16 +26,10 @@ app.on('window-all-closed', function () {
 app.on('ready', function () {
 
   const ret = globalShortcut.register('CommandOrControl+L', () => {
-    // console.log('CommandOrControl+L is pressed');
-    let bounds = mainWindow.getBounds();
-    bounds.x = 0;
-    bounds.y = 0;
-    bounds.width = size.width;
-    bounds.height = size.height;
-    mainWindow.setBounds(bounds, false);
-    // mainWindow.setSize(size.width, size.height, false);
-    mainWindow.show();
-    mainWindow.webContents.send('startMessage', 'start');
+    const currentScreen = getCurrentScreen()
+    transparentWindow.setBounds(currentScreen.workArea)
+    transparentWindow.show();
+    transparentWindow.webContents.send('startMessage', 'start');
   });
   if (!ret) {
     console.log('registration failed')
@@ -42,9 +37,9 @@ app.on('ready', function () {
 
   let size = electron.screen.getPrimaryDisplay().size;
   // メイン画面の表示。ウィンドウの幅、高さを指定できる
-  // mainWindow = new BrowserWindow({width: 640, height: 380});
-  // mainWindow.loadURL('file://' + __dirname + '/index.html');
-  mainWindow = new BrowserWindow({
+  // transparentWindow = new BrowserWindow({width: 640, height: 380});
+  // transparentWindow.loadURL('file://' + __dirname + '/index.html');
+  transparentWindow = new BrowserWindow({
     left          : 0,
     top           : 0,
     width         : 1,
@@ -58,26 +53,27 @@ app.on('ready', function () {
       nodeIntegration : false,
       contextIsolation: false,
       preload         : `${__dirname}/assets/js/preload.js`,
+      devTools        : false,
     },
   });
 
-  //mainWindow.maximize();
+  //transparentWindow.maximize();
 
   // TODO: マルチスクリーンのとき、すべてのスクリーンにウィンドウが必要、そのときスクリーン名を識別しないとキャプチャ時にスクリーン名が判別できない…。
   // console.log(`file://${__dirname}/assets/views/index.html`);
-  mainWindow.loadURL(`file://${__dirname}/assets/views/transparent.html`);
-  // mainWindow.webContents.openDevTools();
+  transparentWindow.loadURL(`file://${__dirname}/assets/views/transparent.html`);
+  // transparentWindow.webContents.openDevTools();
 
   // ウィンドウが閉じられたらアプリも終了
-  mainWindow.on('closed', function () {
-    mainWindow = null;
+  transparentWindow.on('closed', function () {
+    transparentWindow = null;
   });
 
 });
 
 ipcMain.on('requestMessage', (ev, message) => {
   // Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
-  let subWindow = new BrowserWindow({
+  captureWindow = new BrowserWindow({
     // width    : size.width,
     // height   : size.height,
     left          : 0,
@@ -95,32 +91,48 @@ ipcMain.on('requestMessage', (ev, message) => {
       nodeIntegration : false,
       contextIsolation: false,
       preload         : `${__dirname}/assets/js/preload.js`,
+      devTools        : false,
     }
   });
-  subWindow.loadURL(`file://${__dirname}/assets/views/capture.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
-  // subWindow.webContents.openDevTools();
+  captureWindow.loadURL(`file://${__dirname}/assets/views/capture.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
+  // captureWindow.webContents.openDevTools();
   // TODO: サブウィンドウが描画されてからデスクトップ画像を切り抜くため、サブウィンドウ自体がキャプチャされてその部分が白くなってしまう
   // 根本的にはサブウィンドウをはじめ見えないようにしておくか、ここでデスクトップ画像を取得するように修正したほうがよいと思う。
   // タイマーはサブウィンドウ自体を描画せずにデスクトップをキャプチャできるだというだいたいの時間で1秒でなれけばいけない、ということはない。
   // ただタイマーで待つ時間が長いとキャプチャ位置がずれたりとかしてしまうので、おそすぎてもいけない。
   setTimeout(function () {
-    subWindow.show();
+    captureWindow.show();
   }, 1000);
 });
 
 ipcMain.on('nonactiveMessage', (ev, message) => {
-  const bounds = mainWindow.getBounds();
+  const bounds = transparentWindow.getBounds();
   bounds.x = 0;
   bounds.y = 0;
   bounds.width = 100;
   bounds.height = 100;
-  mainWindow.setBounds(bounds, false);
-  mainWindow.focus();
+  transparentWindow.setBounds(bounds, false);
+  transparentWindow.focus();
 });
 
 /**
- * デバッグ用 IPC メッセージ
+ * Debug ipc receiver.
  */
 ipcMain.on('console', (ev, message) => {
   console.log(message);
 });
+
+ipcMain.on('getCurrentScreenId', (ev, message) => {
+  let currentScreen = getCurrentScreen()
+  // Send current screen id to renderer process.
+  captureWindow.webContents.send('getCurrentScreenId', currentScreen.id);
+});
+
+/**
+ * Get current screen.
+ * @returns {Electron.Display}
+ */
+function getCurrentScreen() {
+  const {getCursorScreenPoint, getDisplayNearestPoint} = electron.screen
+  return getDisplayNearestPoint(getCursorScreenPoint())
+}

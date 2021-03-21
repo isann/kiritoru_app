@@ -25,8 +25,6 @@ jobs:
         run: |
           mkdir artifact
           echo $url > artifact/url.txt
-          pwd
-          ls artifact/url.txt
       - name: Upload artifact to share url with other jobs
         uses: actions/upload-artifact@v1
         with:
@@ -61,8 +59,6 @@ jobs:
       - name: Get url to upload to release from artifact
         id: get_url
         run: |
-          pwd
-          ls artifact/url.txt
           url=$(cat artifact/url.txt)
           echo "##[set-output name=upload_url;]$url"
       - name: Upload release asset

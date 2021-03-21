@@ -1,26 +1,26 @@
 'use strict';
 
 // ipc received.
-var activeCapture = false;
-ipcRenderer.on('startMessage', function (ev, message) {
+let activeCapture = false;
+ipcRenderer.on('startMessage', (ev, message) => {
   activeCapture = true;
 });
 
-window.addEventListener('load', function () {
+window.addEventListener('load', () => {
 
-  var rootDivElem = document.createElement('div');
+  let rootDivElem = document.createElement('div');
   rootDivElem.className = 'window';
   window.document.body.insertBefore(rootDivElem, window.document.body.childNodes[0]);
 
-  var cursorDiv, rectDiv;
+  let cursorDiv, rectDiv;
   // 矩形の選択中かどうか
-  var cropping = false;
+  let cropping = false;
   // 矩形選択開始位置
-  var baseX = 0;
-  var baseY = 0;
-  var movedX = 0;
-  var movedY = 0;
-  window.addEventListener('keydown', function (e) {
+  let baseX = 0;
+  let baseY = 0;
+  let movedX = 0;
+  let movedY = 0;
+  window.addEventListener('keydown', (e) => {
     switch (e.keyCode) {
       case 27:
         // cursor 消す
@@ -32,7 +32,7 @@ window.addEventListener('load', function () {
         return;
     }
   });
-  window.addEventListener('mousemove', function (e) {
+  window.addEventListener('mousemove', (e) => {
     if (!activeCapture) return;
     if (cropping) {
       // 切り取り中
@@ -56,10 +56,10 @@ window.addEventListener('load', function () {
       }
     }
   });
-  window.addEventListener('mousedown', function (e) {
+  window.addEventListener('mousedown', (e) => {
     if (cropping) {
       // // 矩形を決定
-      // ipcRenderer.send( 'requsetMessage', {
+      // ipcRenderer.send( 'requestMessage', {
       //   'baseX': baseX,
       //   'baseY': baseY,
       //   'movedX': movedX,
@@ -82,10 +82,10 @@ window.addEventListener('load', function () {
       cropping = true;
     }
   });
-  window.addEventListener('mouseup', function (e) {
+  window.addEventListener('mouseup', (e) => {
     if (cropping) {
       // 矩形を決定
-      ipcRenderer.send('requsetMessage', {
+      ipcRenderer.send('requestMessage', {
         'baseX' : baseX,
         'baseY' : baseY,
         'movedX': movedX,

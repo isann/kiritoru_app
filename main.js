@@ -1,25 +1,22 @@
-/**
- * Created by zono on 2016/11/15.
- */
 'use strict';
 
-var electron = require('electron');
+const electron = require('electron');
 // アプリケーションをコントロールするモジュール
-var app = electron.app;
+const app = electron.app;
 // ウィンドウを作成するモジュール
-var BrowserWindow = electron.BrowserWindow;
+const BrowserWindow = electron.BrowserWindow;
 // Main - Render 通信モジュール
-var ipcMain = electron.ipcMain;
-var globalShortcut = electron.globalShortcut;
+const ipcMain = electron.ipcMain;
+const globalShortcut = electron.globalShortcut;
 
 // メインウィンドウはGCされないようにグローバル宣言
-var mainWindow = null;
+let mainWindow = null;
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
 
 // 全てのウィンドウが閉じたら終了
 app.on('window-all-closed', function () {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
@@ -29,7 +26,7 @@ app.on('ready', function () {
 
   const ret = globalShortcut.register('CommandOrControl+L', () => {
     // console.log('CommandOrControl+L is pressed');
-    var bounds = mainWindow.getBounds();
+    let bounds = mainWindow.getBounds();
     bounds.x = 0;
     bounds.y = 0;
     bounds.width = size.width;
@@ -43,8 +40,7 @@ app.on('ready', function () {
     console.log('registration failed')
   }
 
-  var Screen = electron.screen;
-  var size = Screen.getPrimaryDisplay().size;
+  let size = electron.screen.getPrimaryDisplay().size;
   // メイン画面の表示。ウィンドウの幅、高さを指定できる
   // mainWindow = new BrowserWindow({width: 640, height: 380});
   // mainWindow.loadURL('file://' + __dirname + '/index.html');
@@ -79,13 +75,9 @@ app.on('ready', function () {
 
 });
 
-ipcMain.on('requsetMessage', (ev, message) => {
-  // console.log(123, message);  // prints "ping"
-  // ev.sender.send('responseMessage', 'pong');
-  var Screen = electron.screen;
-  var size = Screen.getPrimaryDisplay().size;
+ipcMain.on('requestMessage', (ev, message) => {
   // Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
-  var subWindow = new BrowserWindow({
+  let subWindow = new BrowserWindow({
     // width    : size.width,
     // height   : size.height,
     left          : 0,
@@ -117,7 +109,7 @@ ipcMain.on('requsetMessage', (ev, message) => {
 });
 
 ipcMain.on('nonactiveMessage', (ev, message) => {
-  var bounds = mainWindow.getBounds();
+  const bounds = mainWindow.getBounds();
   bounds.x = 0;
   bounds.y = 0;
   bounds.width = 100;

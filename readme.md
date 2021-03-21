@@ -1,13 +1,14 @@
 # kiritoru
-kiritori が Sierra にアップデートしたら動作しなくなってしまったので作りました。
-デスクトップのスクリーンショット → 最前面で表示 するアプリです。
+I create a "kiritoru" because "kiritori" app stopped working after updating to Sierra.
+It's an application that takes a screenshot of the desktop and displays it in the foreground.
 ![alt](https://raw.githubusercontent.com/isann/images/master/kiritoru_demo.gif "title")
 
-# 操作方法
-メインウィンドウは完全透明です。
-スクリーンショットをとるとサブウィンドウができてフォーカスをとられるので、
-Command ＋ L でメインウィンドウにフォーカスを戻すことが出来ます。
-マウス移動時に Pointer みたいなのが表示されるはずです。
-Command ＋ L は他アプリでの操作中にも有効なため、スクリーンショットを表示したいときのショートカットキーとなります。
+# Usage
+The main window is completely transparent.
+Press "Command + L" to display the pointer.
+Click on the upper left point on the screen where you want to take a screenshot.
+Move the mouse to the lower right corner and select the area where you want to take a screenshot.
+Click the mouse to bring the captured screen to the forefront.
+Multiple captures are possible.
 
-スクリーンショットを表示するサブウィンドウは、フォーカスをあてて Enter おすと消えます。
+Click on the displayed capture screen to make it active, and press Enter to make the capture screen disappear.

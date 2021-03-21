@@ -65,7 +65,7 @@ app.on('ready', function () {
 
   // TODO: マルチスクリーンのとき、すべてのスクリーンにウィンドウが必要、そのときスクリーン名を識別しないとキャプチャ時にスクリーン名が判別できない…。
   // console.log(`file://${__dirname}/assets/views/index.html`);
-  mainWindow.loadURL(`file://${__dirname}/assets/views/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/assets/views/transparent.html`);
   // mainWindow.webContents.openDevTools();
 
   // ウィンドウが閉じられたらアプリも終了
@@ -97,7 +97,7 @@ ipcMain.on('requestMessage', (ev, message) => {
       preload         : `${__dirname}/assets/js/preload.js`,
     }
   });
-  subWindow.loadURL(`file://${__dirname}/assets/views/sub.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
+  subWindow.loadURL(`file://${__dirname}/assets/views/capture.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);
   // subWindow.webContents.openDevTools();
   // TODO: サブウィンドウが描画されてからデスクトップ画像を切り抜くため、サブウィンドウ自体がキャプチャされてその部分が白くなってしまう
   // 根本的にはサブウィンドウをはじめ見えないようにしておくか、ここでデスクトップ画像を取得するように修正したほうがよいと思う。

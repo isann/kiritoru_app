@@ -85,5 +85,5 @@ function drawImage(video, baseX, baseY, movedX, movedY) {
   let context = canvas.getContext('2d');
   // TODO: Mac でおそらくメニューバーの高さ分？下にずらさないと位置がおかしいので、baseY + 20px としている
   // TODO: DesktopCapture の video 表示するとわかるが、その時点でオリジナルのカラーと異なって見えるのが原因不明
-  context.drawImage(video, baseX, Number(baseY) + 20, movedX, Number(movedY), 0, 0, movedX, movedY);
+  context.drawImage(video, Number(baseX), Number(baseY) + 20, Number(movedX), Number(movedY), 0, 0, Number(movedX), Number(movedY));
 }

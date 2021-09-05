@@ -54,6 +54,7 @@ app.on('ready', function () {
       contextIsolation: false,
       preload         : `${__dirname}/assets/js/preload.js`,
       devTools        : false,
+      nativeWindowOpen: false,
     },
   });
 
@@ -92,6 +93,7 @@ ipcMain.on('requestMessage', (ev, message) => {
       contextIsolation: false,
       preload         : `${__dirname}/assets/js/preload.js`,
       devTools        : false,
+      nativeWindowOpen: false,
     }
   });
   captureWindow.loadURL(`file://${__dirname}/assets/views/capture.html?baseX=${message.baseX}&baseY=${message.baseY}&movedX=${message.movedX}&movedY=${message.movedY}`);

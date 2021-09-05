@@ -45,12 +45,19 @@ jobs:
       - name: npm install
         run: npm ci
       - name: build application
-        run: npm run build-mac
-      - name: Archive app file
-        id: archive_app
+        run: |
+          npm run build-mac
+          npm run build-win
+      - name: Archive mac app file
+        id: archive_mac_app
         run: |
           cd dist/mac-universal
           zip -r kiritoru-mac-universal kiritoru.app
+      - name: Archive win app file
+        id: archive_win_app
+        run: |
+          cd dist
+          zip -r kiritoru-win-portable win-unpacked
 
       - name: Download artifact to get url to upload to release
         uses: actions/download-artifact@v1
@@ -61,7 +68,7 @@ jobs:
         run: |
           url=$(cat artifact/url.txt)
           echo "##[set-output name=upload_url;]$url"
-      - name: Upload release asset
+      - name: Upload release asset mac app
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,4 +76,13 @@ jobs:
           upload_url: ${{ steps.get_url.outputs.upload_url }}
           asset_path: dist/mac-universal/kiritoru-mac-universal.zip
           asset_name: kiritoru-mac-universal.zip
+          asset_content_type: application/zip
+      - name: Upload release asset win app
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_url.outputs.upload_url }}
+          asset_path: dist/kiritoru-win-portable.zip
+          asset_name: kiritoru-win-portable.zip
           asset_content_type: application/zip
